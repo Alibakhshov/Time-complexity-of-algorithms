@@ -1,8 +1,9 @@
 import sys
 import os
 import time
+import threading
 import matplotlib.pyplot as plt
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QComboBox, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog, QMessageBox
 import re
 import time
@@ -116,6 +117,8 @@ class SortingAlgorithm:
     def __init__(self, name, function):
         self.name = name
         self.function = function
+        
+
 
 
 class Sorter(QWidget):
@@ -187,39 +190,6 @@ class Sorter(QWidget):
             except Exception as e:
                 self.show_error("Error loading file: " + str(e))
         
-    # def sort_list(self):
-    #     # Get input list
-    #     input_str = self.input_textbox.text()
-    #     try:
-    #         input_list = [int(x.strip()) for x in input_str.split(",")]
-    #     except Exception as e:
-    #         self.show_error("Invalid input: " + str(e))
-    #         return
-
-    #     # Get selected algorithm
-    #     algo_name = self.algo_combobox.currentText()
-    #     algo = SortingAlgorithm(algo_name, None)
-    #     if algo_name == "Bubble Sort":
-    #         algo.function = bubble_sort
-    #     elif algo_name == "Selection Sort":
-    #         algo.function = selection_sort  
-    #     elif algo_name == "Insertion Sort":
-    #         algo.function = insertion_sort
-    #     elif algo_name == "Merge Sort":
-    #         algo.function = merge_sort
-    #     elif algo_name == "Quick Sort":
-    #         algo.function = quick_sort
-    #     elif algo_name == "Counting Sort":
-    #         algo.function = counting_sort
-    #     elif algo_name == "Radix Sort":
-    #         algo.function = radix_sort
-
-    #     # Run sorting algorithm and update output
-    #     output = []
-    #     for step in algo.function(input_list):
-    #         output.append(", ".join(str(x) for x in step))
-    #     self.output_textbox.setText("\n".join(output))
-    
     def sort_list(self):
         # Get input list
         input_str = self.input_textbox.text()
@@ -259,7 +229,8 @@ class Sorter(QWidget):
         self.time_label.setText(time_taken_text)
 
         self.output_textbox.setText("\n".join(output))
-
+    
+   
 
     def save_file(self):
         filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Text Files (*.txt);;All Files (*)")
