@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QComboBox, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog, QMessageBox
 import re
+from PyQt6 import QtGui
 import time
 
 def bubble_sort(arr):
@@ -132,9 +133,11 @@ class Sorter(QWidget):
         self.setWindowTitle("Sorting Algorithm Visualizer")
         self.setGeometry(100, 100, 800, 600)
         self.setFixedSize(self.size())
-        self.setWindowIcon(QIcon("static/img/icon.png"))
-
-
+        self.setWindowIcon(QtGui.QIcon("static/img/icon.png"))
+        self.setStyleSheet(
+            "background-color: #2c3e50;",
+            "color: #ecf0f1;"
+            )
         
 
         
