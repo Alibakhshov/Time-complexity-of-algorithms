@@ -120,7 +120,6 @@ class SortingAlgorithm:
         
 
 
-
 class Sorter(QWidget):
     def __init__(self):
         super().__init__()
@@ -128,6 +127,17 @@ class Sorter(QWidget):
         self.initUI()
 
     def initUI(self):
+        
+        # Set window properties
+        self.setWindowTitle("Sorting Algorithm Visualizer")
+        self.setGeometry(100, 100, 800, 600)
+        self.setFixedSize(self.size())
+        self.setWindowIcon(QIcon("static/img/icon.png"))
+
+
+        
+
+        
         # Create widgets
         self.input_label = QLabel("Input:")
         self.input_textbox = QLineEdit()
@@ -135,6 +145,8 @@ class Sorter(QWidget):
         self.load_button = QPushButton("Load from File")
         self.sort_button = QPushButton("Sort")
         self.save_button = QPushButton("Save to File")
+        self.exit_button = QPushButton("Exit")
+        self.clear_button = QPushButton("Clear")
         self.output_label = QLabel("Output:")
         self.output_textbox = QTextEdit()
         self.output_textbox.setReadOnly(True)
@@ -163,6 +175,8 @@ class Sorter(QWidget):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sort_button)
         button_layout.addWidget(self.save_button)
+        button_layout.addWidget(self.exit_button)
+        button_layout.addWidget(self.clear_button)
         output_layout = QVBoxLayout()
         output_layout.addWidget(self.output_label)
         output_layout.addWidget(self.output_textbox)
@@ -178,8 +192,20 @@ class Sorter(QWidget):
         self.load_button.clicked.connect(self.load_file)
         self.sort_button.clicked.connect(self.sort_list)
         self.save_button.clicked.connect(self.save_file)
+        self.exit_button.clicked.connect(self.close)
+        self.clear_button.clicked.connect(self.clear)
         self.show()
 
+    # closing the application
+    def close(self):
+        QApplication.quit()
+        
+    def clear(self):
+        self.input_textbox.clear()
+        self.output_textbox.clear()
+        self.time_label.clear()
+
+        
     def load_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt);;All Files (*)")
         if filename:
@@ -230,8 +256,6 @@ class Sorter(QWidget):
 
         self.output_textbox.setText("\n".join(output))
     
-   
-
     def save_file(self):
         filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Text Files (*.txt);;All Files (*)")
         if filename:
