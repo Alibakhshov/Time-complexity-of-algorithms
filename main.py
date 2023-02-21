@@ -1,11 +1,6 @@
 import sys
-import os
 import time
-import threading
-import matplotlib.pyplot as plt
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QComboBox, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog, QMessageBox
-import re
 from PyQt6 import QtGui
 import time
 
