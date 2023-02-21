@@ -25,14 +25,13 @@ Check out this short demo video to see the Time Complexity of Algorithms project
 Here's a screenshot of the main window of the application:
 
 <img src="screenshot.png" alt="Screenshot" width="600"/> 
-How to contribute
+
+## How to contribute
 If you want to contribute to this project, please follow these steps:
 
 Fork this repository
-Create a new branch for your feature or bug fix
-Make your changes
-Write tests for your changes
-Run the tests and make sure they pass
-Commit your changes and push to your forked repository
-Submit a pull request to this repository
-Thank you for your contributions!
+ 1. Create a new branch for your feature or bug fix
+ 2. Make your changes
+ 3. Write tests for your changes
+ 4. Run the tests and make sure they pass
+ 5. Commit your changes and push to your forked repository
