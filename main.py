@@ -141,7 +141,7 @@ class Sorter(QWidget):
         self.input_label = QLabel("Input:")
         self.input_textbox = QLineEdit()
         self.input_textbox.setPlaceholderText("Enter a list of numbers separated by commas")
-        self.load_button = QPushButton("Load from File")
+        self.load_button = QPushButton("Load from File")    
         self.sort_button = QPushButton("Sort")
         self.save_button = QPushButton("Save to File")
         self.exit_button = QPushButton("Exit")
