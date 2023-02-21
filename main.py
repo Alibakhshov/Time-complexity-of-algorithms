@@ -145,7 +145,7 @@ class Sorter(QWidget):
         self.sort_button = QPushButton("Sort")
         self.save_button = QPushButton("Save to File")
         self.exit_button = QPushButton("Exit")
-        self.exit_button.setStyleSheet("background-color: #0f140c;")
+        # self.exit_button.setStyleSheet("background-color: #0f140c;")
         self.clear_button = QPushButton("Clear")
         self.output_label = QLabel("Output:")
         self.output_textbox = QTextEdit()
