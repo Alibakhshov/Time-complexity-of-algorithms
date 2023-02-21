@@ -1,6 +1,6 @@
 # Time complexity of algorithms
 
-This is a Python application built using the PyQT6 framework to help visualize the time complexity of various algorithms. The user can choose from a variety of algorithms and input sizes to generate a graph displaying the time it takes for each algorithm to complete.
+This is a Python application built using the PyQT6 framework to help visualize the time complexity of various algorithms. The user can choose from a variety of algorithms and input sizes to generate  the time it takes for each algorithm to complete.
 
 ## Installation
 To use this project, you must have Python 3.6 or later installed on your computer. You will also need to install the PyQT6 package. You can do this using pip, the Python package manager, by running the following command:
@@ -24,7 +24,8 @@ Check out this short demo video to see the Time Complexity of Algorithms project
 
 Here's a screenshot of the main window of the application:
 
-<img src="screenshot.png" alt="Screenshot" width="600"/> 
+<img src="static/img/1.png" alt="Screenshot" width="600"/> 
+<img src="static/img/2.png" alt="Screenshot" width="600"/> 
 
 ## How to contribute
 If you want to contribute to this project, please follow these steps:
