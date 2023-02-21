@@ -70,8 +70,11 @@ def merge_sort(arr):
 def quick_sort(arr, low, high):
     if low < high:
         pi = partition(arr, low, high)
-        yield from quick_sort(arr, low, pi-1)
-        yield from quick_sort(arr, pi+1, high)
+        yield from quick_sort(arr, pi-1, pi+1)
+        # yield from quick_sort(arr, low, pi-1)
+        # yield from quick_sort(arr, pi+1, high)
+                        
+    
 
 
 def partition(arr, low, high):
