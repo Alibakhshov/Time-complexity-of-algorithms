@@ -1,284 +1,250 @@
 import sys
-import threading
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QFileDialog, QTextEdit, QComboBox, QMessageBox
-import time
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QComboBox, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog, QMessageBox
-
+from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QGridLayout, 
+                             QLabel, QLineEdit, QTextEdit, QFileDialog, 
+                             QMessageBox, QComboBox)
 
 class SortThread(QThread):
-    sort_finished = pyqtSignal(list)
+    sorted_list = pyqtSignal(list)
 
-    def __init__(self, algorithm, data):
+    def __init__(self, num_list, sort_func):
         super().__init__()
-        self.algorithm = algorithm
-        self.data = data
+        self.num_list = num_list
+        self.sort_func = sort_func
 
     def run(self):
-        algo_name = self.algo_combobox.currentText()
-        algo = SortingAlgorithm(algo_name, None)
-        if algo_name == "Bubble Sort":
-            algo.function = bubble_sort
-        elif algo_name == "Selection Sort":
-            algo.function = selection_sort  
-        elif algo_name == "Insertion Sort":
-            algo.function = insertion_sort
-        elif algo_name == "Merge Sort":
-            algo.function = merge_sort
-        elif algo_name == "Quick Sort":
-            algo.function = quick_sort
-        elif algo_name == "Counting Sort":
-            algo.function = counting_sort
-        elif algo_name == "Radix Sort":
-            algo.function = radix_sort
-        self.sort_finished.emit(algo.function)
+        sorted_nums = self.sort_func(self.num_list)
+        self.sorted_list.emit(sorted_nums)
 
-def bubble_sort(data):
-    n = len(data)
-    for i in range(n):
-        for j in range(n-i-1):
-            if data[j] > data[j+1]:
-                data[j], data[j+1] = data[j+1], data[j]
-    return data
-
-def selection_sort(data):
-    n = len(data)
-    for i in range(n):
-        min_index = i
-        for j in range(i+1, n):
-            if data[j] < data[min_index]:
-                min_index = j
-        data[i], data[min_index] = data[min_index], data[i]
-    return data
-
-def insertion_sort(data):
-    n = len(data)
-    for i in range(1, n):
-        key = data[i]
-        j = i - 1
-        while j >= 0 and data[j] > key:
-            data[j+1] = data[j]
-            j -= 1
-        data[j+1] = key
-    return data
-
-def merge_sort(data):
-    if len(data) > 1:
-        mid = len(data) // 2
-        left_half = data[:mid]
-        right_half = data[mid:]
-
-        merge_sort(left_half)
-        merge_sort(right_half)
-
-        i = j = k = 0
-
-        while i < len(left_half) and j < len(right_half):
-            if left_half[i] < right_half[j]:
-                data[k] = left_half[i]
-                i += 1
-            else:
-                data[k] = right_half[j]
-                j += 1
-            k += 1
-
-        while i < len(left_half):
-            data[k] = left_half[i]
-            i += 1
-            k += 1
-
-        while j < len(right_half):
-            data[k] = right_half[j]
-            j += 1
-            k += 1
-
-    return data
-
-def quick_sort(arr, low, high):
-    if low < high:
-        pi = partition(arr, low, high)
-        yield from quick_sort(arr, low, pi-1)
-        yield from quick_sort(arr, pi+1, high)
-
-
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] < pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-        yield arr
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    yield arr
-    return i+1
-
-
-def counting_sort(arr, exp):
-    n = len(arr)
-    output = [0] * n
-    count = [0] * 10
-    for i in range(n):
-        index = arr[i] // exp
-        count[index % 10] += 1
-    for i in range(1, 10):
-        count[i] += count[i-1]
-    i = n - 1
-    while i >= 0:
-        index = arr[i] // exp
-        output[count[index % 10] - 1] = arr[i]
-        count[index % 10] -= 1
-        i -= 1
-    for i in range(n):
-        arr[i] = output[i]
-        yield arr
-        
-def radix_sort(arr):
-    max_num = max(arr)
-    exp = 1
-    while max_num // exp > 0:
-        yield from counting_sort(arr, exp)
-        exp *= 10
-
-class SortingAlgorithm:
-    def __init__(self, name, function):
-        self.name = name
-        self.function = function
-        
-
-
-class Sorter(QWidget):
+class SortApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.init_ui()
 
-        self.initUI()
+    def init_ui(self):
+        self.setGeometry(200, 200, 400, 400)
+        self.setWindowTitle("Sort App")
 
-    def initUI(self):
-        # Create widgets
-        self.input_label = QLabel("Input:")
-        self.input_textbox = QLineEdit()
-        self.input_textbox.setPlaceholderText("Enter a list of numbers separated by commas")
-        self.load_button = QPushButton("Load from File")
-        self.sort_button = QPushButton("Sort")
-        self.save_button = QPushButton("Save to File")
-        self.output_label = QLabel("Output:")
-        self.output_textbox = QTextEdit()
-        self.output_textbox.setReadOnly(True)
-        self.algo_label = QLabel("Algorithm:")
-        self.algo_combobox = QComboBox()
-        self.algo_combobox.addItem("Bubble Sort")
-        self.algo_combobox.addItem("Selection Sort")
-        self.algo_combobox.addItem("Insertion Sort")
-        self.algo_combobox.addItem("Merge Sort")
-        self.algo_combobox.addItem("Quick Sort")
-        self.algo_combobox.addItem("Counting Sort")
-        self.algo_combobox.addItem("Radix Sort")
-        self.time_label = QLabel(self)
-       
+        # Widgets
+        self.num_label = QLabel("Enter numbers separated by space:")
+        self.num_edit = QLineEdit()
+        self.sort_label = QLabel("Select a sorting algorithm:")
+        self.sort_combo = QComboBox()
+        self.sort_combo.addItems(["Bubble Sort", "Selection Sort", "Insertion Sort",
+                                  "Merge Sort", "Quick Sort", "Radix Sort", "Counting Sort"])
+        self.sort_btn = QPushButton("Sort")
+        self.save_btn = QPushButton("Save")
+        self.clear_btn = QPushButton("Clear")
+        self.exit_btn = QPushButton("Exit")
+        self.open_file_btn = QPushButton("Open File")
+        self.output_edit = QTextEdit()
+        self.output_edit.setReadOnly(True)
 
+        # Layout
+        grid = QGridLayout()
+        grid.addWidget(self.num_label, 0, 0)
+        grid.addWidget(self.num_edit, 1, 0)
+        grid.addWidget(self.sort_label, 2, 0)
+        grid.addWidget(self.sort_combo, 3, 0)
+        grid.addWidget(self.sort_btn, 4, 0)
+        grid.addWidget(self.save_btn, 5, 0)
+        grid.addWidget(self.clear_btn, 6, 0)
+        grid.addWidget(self.open_file_btn, 7, 0)
+        grid.addWidget(self.exit_btn, 8, 0)
+        grid.addWidget(self.output_edit, 0, 1, 8, 1)
+        self.setLayout(grid)
 
-        # Create layout
-        input_layout = QHBoxLayout()
-        input_layout.addWidget(self.input_label)
-        input_layout.addWidget(self.input_textbox)
-        input_layout.addWidget(self.load_button)
-        algo_layout = QHBoxLayout()
-        algo_layout.addWidget(self.algo_label)
-        algo_layout.addWidget(self.algo_combobox)
-        algo_layout.addWidget(self.time_label)
-        button_layout = QHBoxLayout()
-        button_layout.addWidget(self.sort_button)
-        button_layout.addWidget(self.save_button)
-        output_layout = QVBoxLayout()
-        output_layout.addWidget(self.output_label)
-        output_layout.addWidget(self.output_textbox)
-        main_layout = QVBoxLayout()
-        main_layout.addLayout(input_layout)
-        main_layout.addLayout(algo_layout)
-        main_layout.addLayout(button_layout)
-        main_layout.addLayout(output_layout)
+        # Signals and Slots
+        self.sort_btn.clicked.connect(self.sort_nums)
+        self.save_btn.clicked.connect(self.save_output)
+        self.clear_btn.clicked.connect(self.clear_inputs)
+        self.open_file_btn.clicked.connect(self.open_file)
+        self.exit_btn.clicked.connect(QApplication.instance().quit)
         
-        self.setLayout(main_layout)
-
-        # Connect signals to slots
-        self.load_button.clicked.connect(self.load_file)
-        self.sort_button.clicked.connect(self.sort_list)
-        self.save_button.clicked.connect(self.save_file)
         self.show()
 
-    def load_file(self):
+    def sort_nums(self):
+        num_list = [int(num) for num in self.num_edit.text().split()]
+        sort_func = self.get_sort_func()
+        self.sort_thread = SortThread(num_list, sort_func)
+        self.sort_thread.sorted_list.connect(self.update_output)
+        self.sort_thread.start()
+
+    def get_sort_func(self):
+        sort_name = self.sort_combo.currentText()
+        if sort_name == "Bubble Sort":
+            return self.bubble_sort
+        elif sort_name == "Selection Sort":
+            return self.selection_sort
+        elif sort_name == "Insertion Sort":
+            return self.insertion_sort
+        elif sort_name == "Merge Sort":
+            return self.merge_sort
+        elif sort_name == "Quick Sort":
+            return self.quick_sort
+        elif sort_name == "Radix Sort":
+            return self.radix_sort
+        elif sort_name == "Counting Sort":
+            return self.counting_sort
+
+    def bubble_sort(self, num_list):
+        n = len(num_list)
+        for i in range(n):
+            for j in range(n-i-1):
+                if num_list[j] > num_list[j+1]:
+                    num_list[j], num_list[j+1] = num_list[j+1], num_list[j]
+        return num_list
+    
+    def selection_sort(self, num_list):
+        n = len(num_list)
+        for i in range(n-1):
+            min_idx = i
+            for j in range(i+1, n):
+                if num_list[j] < num_list[min_idx]:
+                    min_idx = j
+            num_list[i], num_list[min_idx] = num_list[min_idx], num_list[i]
+        return num_list
+
+    def insertion_sort(self, num_list):
+        n = len(num_list)
+        for i in range(1, n):
+            key = num_list[i]
+            j = i-1
+            while j >= 0 and key < num_list[j]:
+                num_list[j+1] = num_list[j]
+                j -= 1
+            num_list[j+1] = key
+        return num_list
+
+    def merge_sort(self, num_list):
+        if len(num_list) > 1:
+            mid = len(num_list) // 2
+            left_half = num_list[:mid]
+            right_half = num_list[mid:]
+
+            self.merge_sort(left_half)
+            self.merge_sort(right_half)
+
+            i = j = k = 0
+
+            while i < len(left_half) and j < len(right_half):
+                if left_half[i] < right_half[j]:
+                    num_list[k] = left_half[i]
+                    i += 1
+                else:
+                    num_list[k] = right_half[j]
+                    j += 1
+                k += 1
+
+            while i < len(left_half):
+                num_list[k] = left_half[i]
+                i += 1
+                k += 1
+
+            while j < len(right_half):
+                num_list[k] = right_half[j]
+                j += 1
+                k += 1
+
+        return num_list
+
+    def quick_sort(self, num_list):
+        if len(num_list) <= 1:
+            return num_list
+
+        pivot = num_list[0]
+        left = []
+        right = []
+        for num in num_list[1:]:
+            if num <= pivot:
+                left.append(num)
+            else:
+                right.append(num)
+
+        return self.quick_sort(left) + [pivot] + self.quick_sort(right)
+
+    def radix_sort(self, num_list):
+        max_num = max(num_list)
+        exp = 1
+        while max_num // exp > 0:
+            self.counting_sort(num_list, exp)
+            exp *= 10
+        return num_list
+
+    def counting_sort(self, num_list, exp):
+        n = len(num_list)
+        output = [0] * n
+        count = [0] * 10
+
+        for num in num_list:
+            count[(num // exp) % 10] += 1
+
+        for i in range(1, 10):
+            count[i] += count[i-1]
+
+        i = n-1
+        while i >= 0:
+            index = (num_list[i] // exp) % 10
+            output[count[index] - 1] = num_list[i]
+            count[index] -= 1
+            i -= 1
+
+        for i in range(n):
+            num_list[i] = output[i]
+
+    def update_output(self, sorted_nums):
+        self.output_edit.clear()
+        self.output_edit.append("Sorted Numbers:")
+        self.output_edit.append(str(sorted_nums))
+
+    def save_output(self):
+        if self.output_edit.toPlainText():
+            file_name, _ = QFileDialog.getSaveFileName(self, "Save File", ".", "Text Files (*.txt)")
+            if file_name:
+                try:
+                    with open(file_name, "w") as file:
+                        file.write(self.output_edit.toPlainText())
+                except Exception as e:
+                    QMessageBox.critical(self, "Error", f"Failed to save file: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Warning", "There is no output to save.")
+            
+    def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt);;All Files (*)")
         if filename:
             try:
                 with open(filename, "r") as file:
                     numbers = file.read().strip().split("\n")
-                    self.input_textbox.setText(",".join(numbers))
+                    input_contents = ','.join(numbers)
+                    self.output_edit.setPlainText(input_contents)
             except Exception as e:
-                self.show_error("Error loading file: " + str(e))
+                QMessageBox.critical(self, "Error", f"Failed to open file: {str(e)}")
+                            
+    # def open_file(self):
         
-    def sort_list(self):
-        # Get input list
-        input_str = self.input_textbox.text()
-        try:
-            input_list = [int(x.strip()) for x in input_str.split(",")]
-        except Exception as e:
-            self.show_error("Invalid input: " + str(e))
-            return
+    #     fileName, _ = QFileDialog.getOpenFileName(self, "Select File", "", "Text Files (*.txt)")
+    #     if fileName:
+    #         try:
+    #             with open(fileName, "r") as f:
+    #                 file_contents = f.read().split('\n')
+    #                 input_contents = ','.join(file_contents)
+    #                 self.output_edit.setPlainText(input_contents)
+    #         except Exception as e:
+    #             QMessageBox.critical(self, "Error", f"Failed to open file: {str(e)}")
 
-        # Get selected algorithm
-        algo_name = self.algo_combobox.currentText()
-        algo = SortingAlgorithm(algo_name, None)
-        if algo_name == "Bubble Sort":
-            algo.function = bubble_sort
-        elif algo_name == "Selection Sort":
-            algo.function = selection_sort  
-        elif algo_name == "Insertion Sort":
-            algo.function = insertion_sort
-        elif algo_name == "Merge Sort":
-            algo.function = merge_sort
-        elif algo_name == "Quick Sort":
-            algo.function = quick_sort
-        elif algo_name == "Counting Sort":
-            algo.function = counting_sort
-        elif algo_name == "Radix Sort":
-            algo.function = radix_sort
-
-        # Run sorting algorithm and update output
-        start_time = time.time()
-        output = []
-        for step in algo.function(input_list):
-            output.append(", ".join(str(x) for x in step))
-        end_time = time.time()
-
-        time_taken = end_time - start_time
-        time_taken_text = "Time taken: {:.6f} seconds".format(time_taken)
-        self.time_label.setText(time_taken_text)
-
-        self.output_textbox.setText("\n".join(output))
-    
-   
-
-    def save_file(self):
-        filename, _ = QFileDialog.getSaveFileName(self, "Save File", "", "Text Files (*.txt);;All Files (*)")
-        if filename:
-            try:
-                with open(filename, "w") as file:
-                    file.write(self.output_textbox.toPlainText())
-            except Exception as e:
-                self.show_error("Error saving file: " + str(e))
-
-    def show_error(self, message):
-        msg = QMessageBox()
-        # msg.setIcon(QMessageBox.Critical)
-        msg.setIcon(QMessageBox.critical(None, "Error", "Error loading file: " + str(e)))
-
-        msg.setText("Error")
-        msg.setInformativeText(message)
-        msg.setWindowTitle("Error")
-        msg.exec_()
+    def clear_inputs(self):
+        self.num_edit.clear()
+        self.output_edit.clear()
+        
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Sorter()
+    ex = SortApp()
     sys.exit(app.exec())
                 
+        
+# if name == "main":
+#     app = QApplication(sys.argv)
+#     window = SortingApp()
+#     window.show()
+#     sys.exit(app.exec_())
