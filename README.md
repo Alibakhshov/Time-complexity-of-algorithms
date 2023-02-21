@@ -12,7 +12,27 @@ Once you have installed PyQT6, you can download the project files from the GitHu
 To start the application, run the following command in your terminal:
 
     python main.py
-    
+
 This will open the main window of the application. From here, you can choose which algorithm you want to visualize and what input sizes to use. You can also adjust the parameters of the graph, such as the axis labels and the colors used.
 
 Once you have selected your options, click the "Generate Graph" button to generate the graph. The graph will be displayed in a separate window, which you can resize and save as an image if you wish.
+
+## Demo
+Check out this short demo video to see the Time Complexity of Algorithms project in action:
+
+<a href="https://github.com/Alibakhshov/Time-complexity-of-algorithms/blob/main/static/video/2023-02-21%2022-27-09.mp4">Demo Video</a>
+
+Here's a screenshot of the main window of the application:
+
+<img src="screenshot.png" alt="Screenshot" width="600"/> 
+How to contribute
+If you want to contribute to this project, please follow these steps:
+
+Fork this repository
+Create a new branch for your feature or bug fix
+Make your changes
+Write tests for your changes
+Run the tests and make sure they pass
+Commit your changes and push to your forked repository
+Submit a pull request to this repository
+Thank you for your contributions!
