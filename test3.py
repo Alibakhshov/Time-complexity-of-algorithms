@@ -37,7 +37,7 @@ button.pack()
 # create a function to start the sorting
 def start_sorting(numbers):
     # play music while sorting
-    pygame.mixer.music.load("music.mp3")
+    pygame.mixer.music.load("static/music/music.mp3")
     pygame.mixer.music.play()
 
     for i in range(len(numbers)):

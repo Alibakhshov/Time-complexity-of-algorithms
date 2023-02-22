@@ -70,7 +70,7 @@ class SortGUI:
             return
 
         # play music while sorting
-        pygame.mixer.music.load("music.mp3")
+        pygame.mixer.music.load("static/music/music.mp3")
         pygame.mixer.music.play()
 
         # run selection sort
