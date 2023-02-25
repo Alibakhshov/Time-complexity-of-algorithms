@@ -7,7 +7,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox,
                              QLabel, QComboBox, QRadioButton, QCheckBox, QPushButton,
-                             QTableWidget, QTableWidgetItem, QHeaderView)
+                             QTableWidget, QTableWidgetItem, QHeaderView, QColorDialog)
 from PyQt6 import QtWidgets
 
 
@@ -38,6 +38,16 @@ class HeartDataAnalyzer(QMainWindow):
         self.exit_button = QPushButton('Exit', self)
         self.exit_button.setGeometry(20, 530, 120, 30)
         self.exit_button.clicked.connect(self.close)
+        
+        # clear button
+        self.clear_button = QPushButton('Clear', self)
+        self.clear_button.setGeometry(20, 490, 120, 30)
+        self.clear_button.clicked.connect(self.clear)
+        
+        # color changer button
+        self.color_button = QPushButton('Change color', self)
+        self.color_button.setGeometry(20, 450, 120, 30)
+        self.color_button.clicked.connect(self.change_color)
 
         
         self.analyze_button = QPushButton('Analyze Data', self)
@@ -66,6 +76,21 @@ class HeartDataAnalyzer(QMainWindow):
         self.result_table.setHorizontalHeaderLabels(['Variable', 'Type/Result'])
         
         self.show()
+        
+    # color changer function
+    def change_color(self):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.setStyleSheet('background-color: {}'.format(color.name()))
+
+        
+    # clear button function
+    def clear(self):
+        self.result_table.clearContents()
+        self.result_table.setRowCount(0)
+        self.info_label.setText('Load a CSV file to start analyzing the data')
+        self.analyze_button.setEnabled(False)
+        self.method_combo.setEnabled(False)
         
     # close button function
     def close(self):
