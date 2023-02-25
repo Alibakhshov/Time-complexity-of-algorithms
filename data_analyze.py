@@ -241,6 +241,7 @@ class HeartDataAnalyzer(QMainWindow):
     #         plt.ylabel('Sample Quantiles')
     #         plt.show()
             
+    # qqplots function that saves the plots to png files in separate folders
     def plot_qqplots(self, output_dir='qqplots'):
         # create the output directory if it doesn't exist
         os.makedirs(output_dir, exist_ok=True)
@@ -264,7 +265,7 @@ class HeartDataAnalyzer(QMainWindow):
 
             
                         
-            # p = norm.test(self.data[col])
+            
             p = normaltest(self.data[col])
             # Test for normality of each column
             for col in self.data.columns:
@@ -273,22 +274,30 @@ class HeartDataAnalyzer(QMainWindow):
                     self.result_table.insertRow(self.result_table.rowCount())
                     self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(col))
 
-            # if p < 0.05:
-            #     self.result_table.insertRow(self.result_table.rowCount())
-            #     self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(col))
-            #     self.result_table.setItem(self.result_table.rowCount()-1, 1, QTableWidgetItem('Not normal'))
-            # else:
-            #     self.result_table.insertRow(self.result_table.rowCount())
-            #     self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(col))
-            #     self.result_table.setItem(self.result_table.rowCount()-1, 1, QTableWidgetItem('Normal'))
-                
-    def plot_boxplots(self):
+    # uncomment it if you want to see the boxplots in the console not in the separate folder
+    # def plot_boxplots(self):
+    #     for col in self.data.columns:
+    #         if col in ['id', 'gender', 'smoke', 'alco', 'active', 'cardio']:
+    #             continue
+    #         plt.boxplot(self.data[col], vert=False)
+    #         plt.title(col)
+    #         plt.show()
+    
+    # boxplots function that saves the plots to png files in separate folders
+    def plot_boxplots(self, output_dir='boxplots'):
+        # create the output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+
         for col in self.data.columns:
             if col in ['id', 'gender', 'smoke', 'alco', 'active', 'cardio']:
                 continue
-            plt.boxplot(self.data[col], vert=False)
-            plt.title(col)
-            plt.show()
+            fig, ax = plt.subplots()
+            ax.boxplot(self.data[col], vert=False)
+            ax.set_title(col)
+            output_path = os.path.join(output_dir, f'{col}_boxplot.png')
+            fig.savefig(output_path)
+            plt.close(fig)
+
             
     def scatterplots_and_correlation(self):
         for i, col1 in enumerate(self.data.columns):
@@ -320,6 +329,7 @@ class HeartDataAnalyzer(QMainWindow):
                     self.result_table.setItem(self.result_table.rowCount()-1, 2, QTableWidgetItem('Moderate negative correlation'))
                 else:
                     self.result_table.setItem(self.result_table.rowCount()-1, 2, QTableWidgetItem('Strong negative correlation'))
+                
                 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
