@@ -1,4 +1,5 @@
 import sys
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -48,7 +49,7 @@ class HeartDataAnalyzer(QMainWindow):
         self.color_button = QPushButton('Change color', self)
         self.color_button.setGeometry(20, 450, 120, 30)
         self.color_button.clicked.connect(self.change_color)
-
+        
         
         self.analyze_button = QPushButton('Analyze Data', self)
         self.analyze_button.setGeometry(20, 90, 120, 30)
@@ -76,6 +77,9 @@ class HeartDataAnalyzer(QMainWindow):
         self.result_table.setHorizontalHeaderLabels(['Variable', 'Type/Result'])
         
         self.show()
+        
+
+    
         
     # color changer function
     def change_color(self):
@@ -144,17 +148,72 @@ class HeartDataAnalyzer(QMainWindow):
             self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(col))
             self.result_table.setItem(self.result_table.rowCount()-1, 1, QTableWidgetItem(var_type))
 
-    def plot_histograms(self):
+    # def plot_histograms(self):
+    #     for col in self.data.columns:
+    #         if col in ['id', 'cardio']:
+    #             continue
+    #         plt.hist(self.data[col])
+    #         plt.title(col)
+    #         plt.xlabel('Values')
+    #         plt.ylabel('Frequency')
+    #         plt.show()
+    
+    
+
+    def plot_histograms(self, output_dir='histograms'):
+        # create the output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+        
         for col in self.data.columns:
             if col in ['id', 'cardio']:
                 continue
-            plt.hist(self.data[col])
-            plt.title(col)
-            plt.xlabel('Values')
-            plt.ylabel('Frequency')
-            plt.show()
-        
-    def contingency_tables(self):
+            
+            # check if the column contains any non-empty values
+            if self.data[col].isnull().all():
+                continue
+            
+            # create a new figure with a larger size
+            fig, ax = plt.subplots(figsize=(8, 6))
+            
+            # adjust the bin size based on the range of the data
+            bins = np.linspace(self.data[col].min(), self.data[col].max(), 20)
+            
+            # plot the histogram with the adjusted bin size
+            ax.hist(self.data[col], bins=bins)
+            ax.set_title(col)
+            ax.set_xlabel('Values')
+            ax.set_ylabel('Frequency')
+            
+            
+                
+            # save the histogram to a file
+            output_path = os.path.join(output_dir, f'{col}.png')
+            plt.savefig(output_path)
+            
+            # clear the figure to free up memory
+            plt.clf()
+            
+            
+
+    # uncomment it if you want to see the contingency tables in the console    
+    # def contingency_tables(self):
+    #     for i, col1 in enumerate(self.data.columns):
+    #         if col1 in ['id', 'cardio']:
+    #             continue
+    #         for j, col2 in enumerate(self.data.columns[i+1:], i+1):
+    #             if col2 in ['id', 'cardio']:
+    #                 continue
+    #             contingency_table = pd.crosstab(self.data[col1], self.data[col2])
+    #             self.result_table.insertRow(self.result_table.rowCount())
+    #             self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(f'{col1} vs {col2}'))
+    #             self.result_table.setItem(self.result_table.rowCount()-1, 1, QTableWidgetItem(str(contingency_table)))
+                
+                
+    # contingency tables function that saves the tables to csv files in separate folders          
+    def contingency_tables(self, output_dir='contingency_tables'):
+        # create the output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+
         for i, col1 in enumerate(self.data.columns):
             if col1 in ['id', 'cardio']:
                 continue
@@ -162,25 +221,47 @@ class HeartDataAnalyzer(QMainWindow):
                 if col2 in ['id', 'cardio']:
                     continue
                 contingency_table = pd.crosstab(self.data[col1], self.data[col2])
-                self.result_table.insertRow(self.result_table.rowCount())
-                self.result_table.setItem(self.result_table.rowCount()-1, 0, QTableWidgetItem(f'{col1} vs {col2}'))
-                self.result_table.setItem(self.result_table.rowCount()-1, 1, QTableWidgetItem(str(contingency_table)))
+                output_path = os.path.join(output_dir, f'{col1}_vs_{col2}.csv')
+                contingency_table.to_csv(output_path)
+        
                 
-    def plot_qqplots(self):
+    # uncomment it if you want to see the qqplots in the console not in the separate folder     
+    # def plot_qqplots(self):
+    #     for col in self.data.columns:
+    #         if col in ['id', 'gender', 'smoke', 'alco', 'active', 'cardio']:
+    #             continue
+    #         norm_values = np.random.normal(np.mean(self.data[col]), np.std(self.data[col]), len(self.data[col]))
+    #         norm_values.sort()
+    #         col_values = self.data[col].sort_values()
+    #         plt.plot(norm_values, col_values, 'o')
+    #         plt.plot([np.min((norm_values.min(), col_values.min())), np.max((norm_values.max(), col_values.max()))],
+    #                 [np.min((norm_values.min(), col_values.min())), np.max((norm_values.max(), col_values.max()))], 'r')
+    #         plt.title(col)
+    #         plt.xlabel('Theoretical Quantiles')
+    #         plt.ylabel('Sample Quantiles')
+    #         plt.show()
+            
+    def plot_qqplots(self, output_dir='qqplots'):
+        # create the output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+
         for col in self.data.columns:
             if col in ['id', 'gender', 'smoke', 'alco', 'active', 'cardio']:
                 continue
             norm_values = np.random.normal(np.mean(self.data[col]), np.std(self.data[col]), len(self.data[col]))
             norm_values.sort()
             col_values = self.data[col].sort_values()
-            plt.plot(norm_values, col_values, 'o')
-            plt.plot([np.min((norm_values.min(), col_values.min())), np.max((norm_values.max(), col_values.max()))],
+            fig, ax = plt.subplots()
+            ax.plot(norm_values, col_values, 'o')
+            ax.plot([np.min((norm_values.min(), col_values.min())), np.max((norm_values.max(), col_values.max()))],
                     [np.min((norm_values.min(), col_values.min())), np.max((norm_values.max(), col_values.max()))], 'r')
-            plt.title(col)
-            plt.xlabel('Theoretical Quantiles')
-            plt.ylabel('Sample Quantiles')
-            plt.show()
-            
+            ax.set_title(col)
+            ax.set_xlabel('Theoretical Quantiles')
+            ax.set_ylabel('Sample Quantiles')
+            output_path = os.path.join(output_dir, f'{col}_qqplot.png')
+            fig.savefig(output_path)
+            plt.close(fig)
+
             
                         
             # p = norm.test(self.data[col])
