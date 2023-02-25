@@ -34,6 +34,12 @@ class HeartDataAnalyzer(QMainWindow):
         self.load_button.setGeometry(20, 50, 120, 30)
         self.load_button.clicked.connect(self.load_csv_file)
         
+        # exit button
+        self.exit_button = QPushButton('Exit', self)
+        self.exit_button.setGeometry(20, 530, 120, 30)
+        self.exit_button.clicked.connect(self.close)
+
+        
         self.analyze_button = QPushButton('Analyze Data', self)
         self.analyze_button.setGeometry(20, 90, 120, 30)
         self.analyze_button.setEnabled(False)
@@ -60,6 +66,14 @@ class HeartDataAnalyzer(QMainWindow):
         self.result_table.setHorizontalHeaderLabels(['Variable', 'Type/Result'])
         
         self.show()
+        
+    # close button function
+    def close(self):
+        close = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if close == QMessageBox.StandardButton.Yes:
+            sys.exit()
+        else:
+            pass
         
     def load_csv_file(self):
         file_name, _ = QFileDialog.getOpenFileName(self, 'Open CSV file', '', 'CSV files (*.csv)')
