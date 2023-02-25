@@ -82,7 +82,7 @@ class HeartDataAnalyzer(QMainWindow):
         elif method == '5':
             self.plot_boxplots()
         elif method == '6':
-            self.plot_scatterplots()
+            self.scatterplots_and_correlation()
         
             
 
