@@ -1,6 +1,13 @@
 import sys
 import time
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QLabel, QComboBox, QTextEdit, QHBoxLayout, QVBoxLayout, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, 
+    QPushButton, QLineEdit, 
+    QLabel, QComboBox, 
+    QTextEdit, QHBoxLayout, 
+    QVBoxLayout, QFileDialog, 
+    QMessageBox, QDialog,
+    QDialogButtonBox)
 from PyQt6 import QtGui
 import time
 
@@ -186,6 +193,7 @@ class Sorter(QWidget):
         self.sort_button = QPushButton("Sort")
         self.save_button = QPushButton("Save to File")
         self.exit_button = QPushButton("Exit")
+        self.change_theme_button = QPushButton("Change Theme")
         # self.exit_button.setStyleSheet("background-color: #0f140c;")
         self.clear_button = QPushButton("Clear")
         self.output_label = QLabel("Output:")
@@ -218,6 +226,7 @@ class Sorter(QWidget):
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.exit_button)
         button_layout.addWidget(self.clear_button)
+        button_layout.addWidget(self.change_theme_button)
         output_layout = QVBoxLayout()
         output_layout.addWidget(self.output_label)
         output_layout.addWidget(self.output_textbox)
@@ -235,7 +244,76 @@ class Sorter(QWidget):
         self.save_button.clicked.connect(self.save_file)
         self.exit_button.clicked.connect(self.close)
         self.clear_button.clicked.connect(self.clear)
+        self.change_theme_button.clicked.connect(self.change_theme)
         self.show()
+        
+    # change theme to multiple themes
+    
+    def change_theme(self):
+        # Create dialog box
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Select a Theme")
+        layout = QVBoxLayout(dialog)
+
+        # Create theme selection dropdown
+        themes = ["Light", "Dark", "Blue", "Green"]
+        theme_combobox = QComboBox(dialog)
+        theme_combobox.addItems(themes)
+        layout.addWidget(theme_combobox)
+
+        # Add OK and Cancel buttons to dialog box
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
+        print(buttons)
+
+        # Show dialog box and update theme if OK button is clicked
+        if dialog.exec() == QDialog.accepted:
+            theme = theme_combobox.currentText()
+            if theme == "Light":
+                self.setStyleSheet("background: rgb(255,255,255);")
+                self.input_label.setStyleSheet("color: rgb(0,0,0);")
+                self.output_label.setStyleSheet("color: rgb(0,0,0);")
+                self.algo_label.setStyleSheet("color: rgb(0,0,0);")
+                self.time_label.setStyleSheet("color: rgb(0,0,0);")
+                self.input_textbox.setStyleSheet("background: rgb(255,255,255);")
+                self.output_textbox.setStyleSheet("background: rgb(255,255,255);")
+                self.algo_combobox.setStyleSheet("background: rgb(255,255,255);")
+            elif theme == "Dark":
+                self.setStyleSheet("background: rgb(0,0,0);")
+                self.input_label.setStyleSheet("color: rgb(255,255,255);")
+                self.output_label.setStyleSheet("color: rgb(255,255,255);")
+                self.algo_label.setStyleSheet("color: rgb(255,255,255);")
+                self.time_label.setStyleSheet("color: rgb(255,255,255);")
+                self.input_textbox.setStyleSheet("background: rgb(0,0,0);")
+                self.output_textbox.setStyleSheet("background: rgb(0,0,0);")
+                self.algo_combobox.setStyleSheet("background: rgb(0,0,0);")
+            elif theme == "Blue":
+                self.setStyleSheet("background: rgb(0,0,255);")
+                self.input_label.setStyleSheet("color: rgb(255,255,255);")
+                self.output_label.setStyleSheet("color: rgb(255,255,255);")
+                self.algo_label.setStyleSheet("color: rgb(255,255,255);")
+                self.time_label.setStyleSheet("color: rgb(255,255,255);")
+                self.input_textbox.setStyleSheet("background: rgb(0,0,255);")
+                self.output_textbox.setStyleSheet("background: rgb(0,0,255);")
+                self.algo_combobox.setStyleSheet("background: rgb(0,0,255);")
+            elif theme == "Green":
+                self.setStyleSheet("background: rgb(0,255,0);")
+                self.input_label.setStyleSheet("color: rgb(0,0,0);")
+                self.output_label.setStyleSheet("color: rgb(0,0,0);")
+                self.algo_label.setStyleSheet("color: rgb(0,0,0);")
+                self.time_label.setStyleSheet("color: rgb(0,0,0);")
+                self.input_textbox.setStyleSheet("background: rgb(0,255,0);")
+                self.output_textbox.setStyleSheet("background: rgb(0,255,0);")
+                self.algo_combobox.setStyleSheet("background: rgb(0,255,0);")
+            else:
+                self.show_error("Invalid theme")
+        else:
+            return None
+            
+        
+    
 
     # closing the application
     def close(self):
