@@ -192,6 +192,7 @@ class HeartDataAnalyzer(QMainWindow):
             
             # clear the figure to free up memory
             plt.clf()
+            self.info_label.setStyleSheet('color: green')
             
             
 
