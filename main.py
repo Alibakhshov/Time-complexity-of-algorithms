@@ -62,45 +62,91 @@ def merge_sort(arr):
         yield arr
 
 
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] < pivot:
+# def quick_sort(arr, low, high):
+#     if low < high:
+#         pi = partition(arr, low, high)
+#         yield from quick_sort(arr, low, pi-1)
+#         yield from quick_sort(arr, pi+1, high)
+
+# def partition(arr, low, high):
+#     pivot = arr[high]
+#     i = low - 1
+#     for j in range(low, high):
+#         if arr[j] < pivot:
+#             i += 1
+#             arr[i], arr[j] = arr[j], arr[i]
+#         yield arr
+#     arr[i+1], arr[high] = arr[high], arr[i+1]
+#     yield arr
+#     return i+1
+
+def quick_sort(arr, start, end):
+    stack = [(start, end)]
+    while stack:
+        start, end = stack.pop()
+        if start >= end:
+            continue
+        pivot = partition(arr, start, end)
+        stack.append((start, pivot - 1))
+        stack.append((pivot + 1, end))
+
+def partition(arr, start, end):
+    pivot = arr[end]
+    i = start - 1
+    for j in range(start, end):
+        if arr[j] <= pivot:
             i += 1
             arr[i], arr[j] = arr[j], arr[i]
-        yield arr
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    yield arr
-    return i+1
+    arr[i + 1], arr[end] = arr[end], arr[i + 1]
+    return i + 1
 
-def quick_sort(arr, low, high):
-    if low < high:
-        pi = partition(arr, low, high)
-        yield from quick_sort(arr, low, pi-1)
-        yield from quick_sort(arr, pi+1, high)
         
-                
+
+# def counting_sort(arr, exp):
+#     n = len(arr)
+#     output = [0] * n
+#     count = [0] * 10
+#     for i in range(n):
+#         index = arr[i] // exp
+#         count[index % 10] += 1
+#     for i in range(1, 10):
+#         count[i] += count[i-1]
+#     i = n - 1
+#     while i >= 0:
+#         index = arr[i] // exp
+#         output[count[index % 10] - 1] = arr[i]
+#         count[index % 10] -= 1
+#         i -= 1
+#     for i in range(n):
+#         arr[i] = output[i]
+#         yield arr
 
 
-def counting_sort(arr, exp):
-    n = len(arr)
-    output = [0] * n
-    count = [0] * 10
-    for i in range(n):
-        index = arr[i] // exp
-        count[index % 10] += 1
-    for i in range(1, 10):
+def counting_sort(arr):
+    # Find the maximum element in the array
+    max_element = max(arr)
+    
+    # Create a count array of size max_element+1 and initialize all its elements to 0
+    count = [0] * (max_element+1)
+    
+    # Count the number of occurrences of each element in the input array
+    for i in range(len(arr)):
+        count[arr[i]] += 1
+    
+    # Modify the count array to contain the number of elements <= each element
+    for i in range(1, len(count)):
         count[i] += count[i-1]
-    i = n - 1
-    while i >= 0:
-        index = arr[i] // exp
-        output[count[index % 10] - 1] = arr[i]
-        count[index % 10] -= 1
-        i -= 1
-    for i in range(n):
-        arr[i] = output[i]
-        yield arr
+    
+    # Create a result array of the same size as the input array and fill it with 0s
+    result = [0] * len(arr)
+    
+    # Iterate over the input array in reverse order and place each element in its sorted position in the result array
+    for i in range(len(arr)-1, -1, -1):
+        result[count[arr[i]]-1] = arr[i]
+        count[arr[i]] -= 1
+    
+    # Return the sorted result array
+    return result
         
 def radix_sort(arr):
     max_num = max(arr)
@@ -239,11 +285,30 @@ class Sorter(QWidget):
             algo.function = radix_sort
 
         # Run sorting algorithm and update output
+        # start_time = time.time()
+        # output = []
+        # for step in algo.function(input_list):
+        #     output.append(", ".join(str(x) for x in step))
+        # end_time = time.time()
+        
+        # Run sorting algorithm and update output
         start_time = time.time()
         output = []
-        for step in algo.function(input_list):
-            output.append(", ".join(str(x) for x in step))
+        if algo_name == "Quick Sort":
+            output.append(", ".join(str(x) for x in input_list))
+            algo.function(input_list, 0, len(input_list) - 1)
+            output.append(", ".join(str(x) for x in input_list))
+           
+            
+        elif algo_name == "Counting Sort":
+            output.append(", ".join(str(x) for x in input_list))
+            input_list = algo.function(input_list)
+        else:
+            for step in algo.function(input_list):
+                output.append(", ".join(str(x) for x in step))
         end_time = time.time()
+
+        
 
         time_taken = end_time - start_time
         time_taken_text = "Time taken: {:.6f} seconds".format(time_taken)
