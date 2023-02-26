@@ -299,16 +299,14 @@ class Sorter(QWidget):
             algo.function(input_list, 0, len(input_list) - 1)
             output.append(", ".join(str(x) for x in input_list))
            
-            
         elif algo_name == "Counting Sort":
             output.append(", ".join(str(x) for x in input_list))
             input_list = algo.function(input_list)
+            output.append(", ".join(str(x) for x in input_list))
         else:
             for step in algo.function(input_list):
                 output.append(", ".join(str(x) for x in step))
         end_time = time.time()
-
-        
 
         time_taken = end_time - start_time
         time_taken_text = "Time taken: {:.6f} seconds".format(time_taken)
