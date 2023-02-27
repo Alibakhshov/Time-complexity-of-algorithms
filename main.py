@@ -9,19 +9,16 @@ from PyQt6.QtWidgets import (
     QMessageBox, QDialog,
     QDialogButtonBox)
 from PyQt6 import QtGui
-import time
+
 
 def bubble_sort(arr):
     n = len(arr)
-    
     for i in range(n):
         for j in range(0, n-i-1):
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]
         yield arr
-        return n
-
-
+        
 def selection_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -69,25 +66,6 @@ def merge_sort(arr):
             j += 1
             k += 1
         yield arr
-
-
-# def quick_sort(arr, low, high):
-#     if low < high:
-#         pi = partition(arr, low, high)
-#         yield from quick_sort(arr, low, pi-1)
-#         yield from quick_sort(arr, pi+1, high)
-
-# def partition(arr, low, high):
-#     pivot = arr[high]
-#     i = low - 1
-#     for j in range(low, high):
-#         if arr[j] < pivot:
-#             i += 1
-#             arr[i], arr[j] = arr[j], arr[i]
-#         yield arr
-#     arr[i+1], arr[high] = arr[high], arr[i+1]
-#     yield arr
-#     return i+1
 
 def quick_sort(arr, start, end):
     stack = [(start, end)]
