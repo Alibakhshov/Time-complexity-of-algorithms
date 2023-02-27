@@ -13,11 +13,13 @@ import time
 
 def bubble_sort(arr):
     n = len(arr)
+    
     for i in range(n):
         for j in range(0, n-i-1):
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]
         yield arr
+        return n
 
 
 def selection_sort(arr):
@@ -209,6 +211,7 @@ class Sorter(QWidget):
         self.algo_combobox.addItem("Counting Sort")
         self.algo_combobox.addItem("Radix Sort")
         self.time_label = QLabel(self)
+        self.length_of_array_label = QLabel(self)
        
 
 
@@ -221,6 +224,7 @@ class Sorter(QWidget):
         algo_layout.addWidget(self.algo_label)
         algo_layout.addWidget(self.algo_combobox)
         algo_layout.addWidget(self.time_label)
+        algo_layout.addWidget(self.length_of_array_label)
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sort_button)
         button_layout.addWidget(self.save_button)
@@ -388,8 +392,9 @@ class Sorter(QWidget):
 
         time_taken = end_time - start_time
         time_taken_text = "Time taken: {:.6f} seconds".format(time_taken)
+        n = "Length of array: {}".format(len(input_list))
         self.time_label.setText(time_taken_text)
-
+        self.length_of_array_label.setText(n)
         self.output_textbox.setText("\n".join(output))
     
     def save_file(self):
