@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
     QMessageBox, QDialog,
     QDialogButtonBox)
 from PyQt6 import QtGui
-
+from link_list import App
 
 def bubble_sort(arr):
     n = len(arr)
@@ -127,8 +127,6 @@ class SortingAlgorithm:
         self.name = name
         self.function = function
         
-
-
 class Sorter(QWidget):
     def __init__(self):
         super().__init__()
@@ -152,6 +150,7 @@ class Sorter(QWidget):
         self.sort_button = QPushButton("Sort")
         self.save_button = QPushButton("Save to File")
         self.exit_button = QPushButton("Exit")
+        self.link_list_button = QPushButton("Linked List")
         self.change_theme_button = QPushButton("Change Theme")
         # self.exit_button.setStyleSheet("background-color: #0f140c;")
         self.clear_button = QPushButton("Clear")
@@ -185,6 +184,7 @@ class Sorter(QWidget):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.sort_button)
         button_layout.addWidget(self.save_button)
+        button_layout.addWidget(self.link_list_button)
         button_layout.addWidget(self.exit_button)
         button_layout.addWidget(self.clear_button)
         button_layout.addWidget(self.change_theme_button)
@@ -205,9 +205,14 @@ class Sorter(QWidget):
         self.save_button.clicked.connect(self.save_file)
         self.exit_button.clicked.connect(self.close)
         self.clear_button.clicked.connect(self.clear)
+        self.link_list_button.clicked.connect(self.link_list_open)
         self.change_theme_button.clicked.connect(self.change_theme)
         self.show()
         
+    def link_list_open(self):
+        self.second_window = App()
+        self.second_window.show()
+    
     # change theme to multiple themes
     
     def change_theme(self):
