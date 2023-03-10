@@ -142,7 +142,7 @@ class Sorter(QWidget):
         self.setGeometry(100, 100, 800, 600)
         self.setFixedSize(self.size())
         self.setWindowIcon(QtGui.QIcon("static/img/icon.png"))
-        self.setStyleSheet("background: rgb(20,0,36);")
+        # self.setStyleSheet("background: rgb(20,0,36);")
     
         # Create widgets
         self.input_label = QLabel("Input:")
