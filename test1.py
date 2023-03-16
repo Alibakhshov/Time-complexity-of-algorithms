@@ -1,136 +1,159 @@
 import sys
 import pandas as pd
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QMessageBox
-from PyQt6.QtGui import QPixmap
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+import numpy as np
 import matplotlib.pyplot as plt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QPushButton, QLabel
+from PyQt6.QtCore import Qt
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Regression Analysis and Outlier Detection")
+        # set window title and size
+        self.setWindowTitle("Regression Analysis")
+        self.setGeometry(100, 100, 800, 600)
 
-        self.csv_file = None
+        # create a button to load data
+        self.load_data_button = QPushButton("Load Data", self)
+        self.load_data_button.setGeometry(50, 50, 100, 50)
+        self.load_data_button.clicked.connect(self.load_data)
 
-        self.scatterplot_label = QLabel(self)
-        self.scatterplot_label.setGeometry(20, 70, 450, 450)
+        # create a label to display the filename
+        self.file_label = QLabel("", self)
+        self.file_label.setGeometry(200, 50, 400, 50)
 
-        self.squaredR_label = QLabel(self)
-        self.squaredR_label.setGeometry(500, 70, 450, 50)
+        # create a button to perform regression with outliers
+        self.regression_with_outliers_button = QPushButton("Regression with Outliers", self)
+        self.regression_with_outliers_button.setGeometry(50, 150, 200, 50)
+        self.regression_with_outliers_button.clicked.connect(self.regression_with_outliers)
 
-        self.residuals_label = QLabel(self)
-        self.residuals_label.setGeometry(500, 130, 450, 450)
+        # create a button to remove outliers
+        self.remove_outliers_button = QPushButton("Remove Outliers", self)
+        self.remove_outliers_button.setGeometry(50, 250, 200, 50)
+        self.remove_outliers_button.clicked.connect(self.remove_outliers)
 
-        load_button = QPushButton("Load CSV File", self)
-        load_button.setGeometry(20, 20, 150, 30)
-        load_button.clicked.connect(self.load_csv)
+        # create a button to perform regression without outliers
+        self.regression_without_outliers_button = QPushButton("Regression without Outliers", self)
+        self.regression_without_outliers_button.setGeometry(50, 350, 200, 50)
+        self.regression_without_outliers_button.clicked.connect(self.regression_without_outliers)
 
-        regression_button = QPushButton("Perform Regression", self)
-        regression_button.setGeometry(200, 20, 150, 30)
-        regression_button.clicked.connect(self.perform_regression)
+    def load_data(self):
+        # open a file dialog to select the CSV file
+        filename, _ = QFileDialog.getOpenFileName(self, "Load Data", "", "CSV Files (*.csv)")
+        if filename:
+            # load the data into a pandas DataFrame
+            self.data = pd.read_csv(filename)
+            self.file_label.setText(f"File: {filename}")
 
-        outlier_button = QPushButton("Remove Outliers", self)
-        outlier_button.setGeometry(380, 20, 150, 30)
-        outlier_button.clicked.connect(self.remove_outliers)
-
-    def load_csv(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        self.csv_file, _ = QFileDialog.getOpenFileName(self, "Load CSV File", "",
-                                                       "CSV Files (*.csv)", options=options)
-
-    def perform_regression(self):
-        if not self.csv_file:
-            QMessageBox.warning(self, "Error", "Please load a CSV file first.")
+    def regression_with_outliers(self):
+        # check if data has been loaded
+        if not hasattr(self, "data"):
             return
 
-        data = pd.read_csv(self.csv_file)
-        x = data['x'].values.reshape(-1, 1)
-        y = data['y'].values.reshape(-1, 1)
+        # perform regression with outliers
+        x = self.data["x"]
+        y = self.data["y"]
+        coeffs = np.polyfit(x, y, 1)
+        m = coeffs[0]
+        b = coeffs[1]
+        y_pred = m * x + b
+        residuals = y - y_pred
+        squared_r = np.corrcoef(x, y)[0,1] ** 2
+        outlier_mask = np.abs(residuals) > 3 * np.std(residuals)
 
-        # Scatterplot
-        plt.scatter(x, y)
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.title('Scatterplot with Outliers')
-        plt.savefig('scatterplot.png')
-        plt.clf()
+        # create a scatterplot
+        fig, ax = plt.subplots()
+        ax.scatter(x, y)
+        ax.plot(x, y_pred, color="red")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_title("Regression with Outliers")
 
-        pixmap = QPixmap('scatterplot.png')
-        self.scatterplot_label.setPixmap(pixmap)
+        # create a scatterplot of residuals
+        fig2, ax2 = plt.subplots()
+        ax2.scatter(x[outlier_mask], residuals[outlier_mask], color="red")
+        ax2.scatter(x[~outlier_mask], residuals[~outlier_mask], color="blue")
+        ax2.axhline(y=0, color="black", linestyle="--")
+        ax2.set_xlabel("x")
+        ax2.set_ylabel("Residuals")
+        ax2.set_title("Scatterplot of Residuals")
 
-        # Regression with outliers
-        model = LinearRegression().fit(x, y)
-        y_pred = model.predict(x)
-        r2 = r2_score(y, y_pred)
+        # display the squared R
+        print(f"Squared R: {squared_r}")
 
-        # SquaredR
-        self.squaredR_label.setText(f"Squared R: {r2:.4f}")
+        # display the model coefficients
+        print(f"Model: y = {m:.2f}x + {b:.2f}")
 
-        # Scatterplot of residuals
-        plt.scatter(x, y - y_pred)
-        plt.xlabel('x')
-        plt.ylabel('Residuals')
-        plt.title('Scatterplot of Residuals with Outliers')
-        plt.savefig('residuals.png')
-        plt.clf()
+        # display the number of outliers
+        num_outliers = np.sum(outlier_mask)
+        print(f"Number of Outliers: {num_outliers}")
 
-        pixmap = QPixmap('residuals.png')
-        self.residuals_label.setPixmap(pixmap)
-
-        # Report model
-        QMessageBox.information(self, "Regression Report", f"Intercept: {model.intercept_[0]:.4f}\nSlope: {model.coef_[0][0]:.4f}\nSquared R: {r2:.4f}")
+        # show the plots
+        plt.show()
 
     def remove_outliers(self):
-        if not self.csv_file:
-            QMessageBox.warning(self, "Error", "Please load a CSV file first.")
+        # check if data has been loaded
+        if not hasattr(self, "data"):
             return
 
-        data = pd.read_csv(self.csv_file)
-         x = data['x'].values.reshape(-1, 1)
-    y = data['y'].values.reshape(-1, 1)
+        # remove outliers from the data
+        x = self.data["x"]
+        y = self.data["y"]
+        residuals = y - np.polyfit(x, y, 1)[0] * x
+        outlier_mask = np.abs(residuals) > 3 * np.std(residuals)
+        self.data = self.data[~outlier_mask]
+        self.file_label.setText("File: Data (outliers removed)")
 
-    # Identify and remove outliers
-    model = LinearRegression().fit(x, y)
-    y_pred = model.predict(x)
-    residuals = y - y_pred
-    outliers = residuals > 3 * residuals.std()
+    def regression_without_outliers(self):
+        # check if data has been loaded
+        if not hasattr(self, "data"):
+            return
 
-    x_no_outliers = x[~outliers]
-    y_no_outliers = y[~outliers]
+        # perform regression without outliers
+        x = self.data["x"]
+        y = self.data["y"]
+        coeffs = np.polyfit(x, y, 1)
+        m = coeffs[0]
+        b = coeffs[1]
+        y_pred = m * x + b
+        residuals = y - y_pred
+        squared_r = np.corrcoef(x, y)[0,1] ** 2
 
-    # Regression without outliers
-    model_no_outliers = LinearRegression().fit(x_no_outliers, y_no_outliers)
-    y_pred_no_outliers = model_no_outliers.predict(x_no_outliers)
-    r2_no_outliers = r2_score(y_no_outliers, y_pred_no_outliers)
+        # create a scatterplot
+        fig, ax = plt.subplots()
+        ax.scatter(x, y)
+        ax.plot(x, y_pred, color="red")
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_title("Regression without Outliers")
 
-    # Scatterplot
-    plt.scatter(x_no_outliers, y_no_outliers)
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Scatterplot without Outliers')
-    plt.savefig('scatterplot.png')
-    plt.clf()
+        # create a scatterplot of residuals
+        fig2, ax2 = plt.subplots()
+        ax2.scatter(x, residuals)
+        ax2.axhline(y=0, color="black", linestyle="--")
+        ax2.set_xlabel("x")
+        ax2.set_ylabel("Residuals")
+        ax2.set_title("Scatterplot of Residuals")
 
-    pixmap = QPixmap('scatterplot.png')
-    self.scatterplot_label.setPixmap(pixmap)
+        # display the squared R
+        print(f"Squared R: {squared_r}")
 
-    # SquaredR
-    self.squaredR_label.setText(f"Squared R: {r2_no_outliers:.4f}")
+        # display the model coefficients
+        print(f"Model: y = {m:.2f}x + {b:.2f}")
 
-    # Scatterplot of residuals
-    plt.scatter(x_no_outliers, y_no_outliers - y_pred_no_outliers)
-    plt.xlabel('x')
-    plt.ylabel('Residuals')
-    plt.title('Scatterplot of Residuals without Outliers')
-    plt.savefig('residuals.png')
-    plt.clf()
+        # show the plots
+        plt.show()
+        
 
-    pixmap = QPixmap('residuals.png')
-    self.residuals_label.setPixmap(pixmap)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
+            
+        
 
-    # Report model
-    QMessageBox.information(self, "Regression Report", f"Intercept: {model_no_outliers.intercept_[0]:.4f}\nSlope: {model_no_outliers.coef_[0][0]:.4f}\nSquared R: {r2_no_outliers:.4f}")
+
+
+            
