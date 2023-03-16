@@ -193,6 +193,8 @@ class MainWindow(QMainWindow):
 
         # display the model coefficients
         print(f"Model: y = {m:.2f}x + {b:.2f}")
+        
+            
 
         # show the plots 
         plt.show()

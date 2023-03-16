@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QFileDialog, QMessageBox
                              QLabel, QComboBox, QRadioButton, QCheckBox, QPushButton,
                              QTableWidget, QTableWidgetItem, QHeaderView, QColorDialog)
 from PyQt6 import QtWidgets
-
+from midterm import MainWindow
 
 
 class HeartDataAnalyzer(QMainWindow):
@@ -50,6 +50,12 @@ class HeartDataAnalyzer(QMainWindow):
         self.color_button.setGeometry(20, 450, 120, 30)
         self.color_button.clicked.connect(self.change_color)
         
+        # Second part of the GUI
+        midterm = QPushButton("Open Second Window", self)
+        midterm.setGeometry(20, 130, 120, 30)
+        midterm.clicked.connect(self.open_second_window)
+
+        
         
         self.analyze_button = QPushButton('Analyze Data', self)
         self.analyze_button.setGeometry(20, 90, 120, 30)
@@ -79,7 +85,10 @@ class HeartDataAnalyzer(QMainWindow):
         self.show()
         
 
-    
+    def open_second_window(self):
+        self.second_window = MainWindow()
+        self.second_window.show()
+        
         
     # color changer function
     def change_color(self):
