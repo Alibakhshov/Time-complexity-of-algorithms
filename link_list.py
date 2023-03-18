@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
+# from main import Sorter 
 
 class Node:
     def __init__(self, data=None):
@@ -96,12 +97,22 @@ class App(QWidget):
         self.position_button = QPushButton('Delete at Position', self)
         self.position_button.move(260, 100)
         self.position_button.clicked.connect(self.delete_at_position)
+        
+        self.back_button = QPushButton('Back', self)
+        self.back_button.move(380, 150)
+        self.back_button.clicked.connect(self.back)
 
         self.result_label = QLabel(self)
         self.result_label.move(20, 140)
         self.result_label.resize(330, 80)
 
         self.show()
+        
+    # back function
+    def back(self):
+        self.main = Sorter()
+        self.main.show()
+        self.close()
 
     def delete_at_beginning(self):
         linked_list = LinkedList()
