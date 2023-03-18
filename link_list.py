@@ -83,7 +83,7 @@ class App(QWidget):
         self.pos_label.move(20, 60)
 
         self.pos_input = QLineEdit(self)
-        self.pos_input.move(250, 60)
+        self.pos_input.move(270, 60)
         self.pos_input.resize(150, 25)
 
         self.beginning_button = QPushButton('Delete at Beginning', self)
@@ -91,11 +91,11 @@ class App(QWidget):
         self.beginning_button.clicked.connect(self.delete_at_beginning)
 
         self.end_button = QPushButton('Delete at End', self)
-        self.end_button.move(140, 100)
+        self.end_button.move(170, 100)
         self.end_button.clicked.connect(self.delete_at_end)
 
         self.position_button = QPushButton('Delete at Position', self)
-        self.position_button.move(260, 100)
+        self.position_button.move(280, 100)
         self.position_button.clicked.connect(self.delete_at_position)
         
         self.back_button = QPushButton('Back', self)

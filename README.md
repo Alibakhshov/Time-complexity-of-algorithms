@@ -25,7 +25,12 @@ Check out this short demo video to see the Time Complexity of Algorithms project
 Here's a screenshot of the main window of the application:
 
 <img src="static/img/1.png" alt="Screenshot" width="600"/> 
-<img src="static/img/2.png" alt="Screenshot" width="600"/> 
+<img src="static/img/2.png" alt="Screenshot" width="600"/>
+<img src="static/img/3.png" alt="Screenshot" width="600"/>
+<img src="static/img/4.png" alt="Screenshot" width="600"/>
+<img src="static/img/5.png" alt="Screenshot" width="600"/>
+<img src="static/img/6.png" alt="Screenshot" width="600"/>
+ 
 
 ## How to contribute
 If you want to contribute to this project, please follow these steps:
