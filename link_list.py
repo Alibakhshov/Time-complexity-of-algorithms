@@ -61,8 +61,8 @@ class App(QWidget):
         self.title = 'Linked List Deletion Operations'
         self.left = 100
         self.top = 100
-        self.width = 400
-        self.height = 300
+        self.width = 500
+        self.height = 200
         self.initUI()
 
     def initUI(self):
@@ -74,7 +74,7 @@ class App(QWidget):
         self.list_label.move(20, 20)
 
         self.list_input = QLineEdit(self)
-        self.list_input.move(200, 20)
+        self.list_input.move(220, 20)
         self.list_input.resize(150, 25)
 
         self.pos_label = QLabel(self)
@@ -82,7 +82,7 @@ class App(QWidget):
         self.pos_label.move(20, 60)
 
         self.pos_input = QLineEdit(self)
-        self.pos_input.move(200, 60)
+        self.pos_input.move(250, 60)
         self.pos_input.resize(150, 25)
 
         self.beginning_button = QPushButton('Delete at Beginning', self)

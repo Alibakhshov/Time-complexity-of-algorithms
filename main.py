@@ -203,7 +203,7 @@ class Sorter(QWidget):
         self.load_button.clicked.connect(self.load_file)
         self.sort_button.clicked.connect(self.sort_list)
         self.save_button.clicked.connect(self.save_file)
-        self.exit_button.clicked.connect(self.close)
+        self.exit_button.clicked.connect(self.exit)
         self.clear_button.clicked.connect(self.clear)
         self.link_list_button.clicked.connect(self.link_list_open)
         self.change_theme_button.clicked.connect(self.change_theme)
@@ -212,6 +212,7 @@ class Sorter(QWidget):
     def link_list_open(self):
         self.second_window = App()
         self.second_window.show()
+        self.close()
     
     # change theme to multiple themes
     
@@ -282,7 +283,7 @@ class Sorter(QWidget):
     
 
     # closing the application
-    def close(self):
+    def exit(self):
         QApplication.quit()
         
     def clear(self):
