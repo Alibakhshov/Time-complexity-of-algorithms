@@ -169,8 +169,6 @@ class Sorter(QWidget):
         self.time_label = QLabel(self)
         self.length_of_array_label = QLabel(self)
        
-
-
         # Create layout
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.input_label)
@@ -279,9 +277,6 @@ class Sorter(QWidget):
         else:
             return None
             
-        
-    
-
     # closing the application
     def exit(self):
         QApplication.quit()
