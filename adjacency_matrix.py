@@ -39,43 +39,53 @@ class ShortestPathFinder(QMainWindow):
         source_node_text = self.source_node_input.toPlainText()
         target_node_text = self.target_node_input.toPlainText()
 
-        # Convert input text to adjacency matrix and source/target node integers
-        adj_matrix = []
-        lines = adj_matrix_text.split("\n")
-        for line in lines:
-            row = list(map(int, line.strip().split()))
-            adj_matrix.append(row)
+        try:
+            # Convert input text to adjacency matrix and source/target node integers
+            adj_matrix = []
+            lines = adj_matrix_text.split("\n")
+            for line in lines:
+                row = list(map(int, line.strip().split()))
+                adj_matrix.append(row)
 
-        source_node = int(source_node_text.strip())
-        target_node = int(target_node_text.strip())
+            source_node = int(source_node_text.strip())
+            target_node = int(target_node_text.strip())
 
-        # Call shortest_path function and display result
-        shortest_path = self.shortest_path(adj_matrix, source_node, target_node)
-        if shortest_path:
-            result = "Shortest Path: " + " -> ".join(map(str, shortest_path))
-        else:
-            result = "No path found"
-        self.result_label.setText(result)
+            # Call shortest_path function and display result
+            shortest_path = self.shortest_path(adj_matrix, source_node, target_node)
+            if shortest_path:
+                result = "Shortest Path: " + " -> ".join(map(str, shortest_path))
+            else:
+                result = "No path found"
+            self.result_label.setText(result)
+
+        except ValueError as ve:
+            self.result_label.setText("Error: Invalid input. Please enter valid integers for source and target nodes.")
+        except Exception as e:
+            self.result_label.setText("Error: " + str(e))
 
     def shortest_path(self, adj_matrix, source, target):
-        num_nodes = len(adj_matrix)
-        queue = [source]
-        visited = set()
-        path = {}
+        try:
+            num_nodes = len(adj_matrix)
+            queue = [source]
+            visited = set()
+            path = {}
 
-        while queue:
-            node = queue.pop(0)
-            visited.add(node)
+            while queue:
+                node = queue.pop(0)
+                visited.add(node)
 
-            if node == target:
-                return self.reconstruct_path(source, target, path)
+                if node == target:
+                    return self.reconstruct_path(source, target, path)
 
-            for neighbor in range(num_nodes):
-                if adj_matrix[node-1][neighbor] > 0 and neighbor + 1 not in visited:
-                    path[neighbor + 1] = node
-                    queue.append(neighbor + 1)
+                for neighbor in range(num_nodes):
+                    if adj_matrix[node-1][neighbor] > 0 and neighbor + 1 not in visited:
+                        path[neighbor + 1] = node
+                        queue.append(neighbor + 1)
 
-        return None
+            return None
+
+        except IndexError as ie:
+            raise IndexError("Error: Invalid adjacency matrix. Please check the matrix dimensions and values.")
 
     def reconstruct_path(self, source, target, path):
         node = target
@@ -86,6 +96,7 @@ class ShortestPathFinder(QMainWindow):
         shortest_path.reverse()
 
         return shortest_path
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
