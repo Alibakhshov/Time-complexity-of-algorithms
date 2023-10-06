@@ -141,7 +141,7 @@ class Sorter(QWidget):
     def initUI(self):
         
         # Set window properties
-        self.setWindowTitle("Sorting Algorithm Visualizer")
+        self.setWindowTitle("Data Structure & Algortihm")
         self.setGeometry(100, 150, 1300, 600)
         self.setFixedSize(self.size())
         self.setWindowIcon(QtGui.QIcon("static/img/icon.png"))
