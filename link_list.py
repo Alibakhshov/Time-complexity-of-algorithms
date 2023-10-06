@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
-# from main import Sorter 
+# from main import Sorter
 
 class Node:
     def __init__(self, data=None):
@@ -65,6 +65,8 @@ class App(QWidget):
         self.width = 500
         self.height = 200
         self.initUI()
+        
+    
 
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -110,8 +112,8 @@ class App(QWidget):
         
     # back function
     def back(self):
-        self.main = Sorter()
-        self.main.show()
+        self.third_window = Sorter()
+        self.third_window.show()
         self.close()
 
     def delete_at_beginning(self):

@@ -10,6 +10,9 @@ from PyQt6.QtWidgets import (
     QDialogButtonBox)
 from PyQt6 import QtGui
 from link_list import App
+from adjacency_matrix import ShortestPathFinder
+from graph import ShortestPathFinderFromGraph
+from greedy_algorithm import ShortestPathApp
 
 def bubble_sort(arr):
     n = len(arr)
@@ -127,6 +130,8 @@ class SortingAlgorithm:
         self.name = name
         self.function = function
         
+
+        
 class Sorter(QWidget):
     def __init__(self):
         super().__init__()
@@ -137,7 +142,7 @@ class Sorter(QWidget):
         
         # Set window properties
         self.setWindowTitle("Sorting Algorithm Visualizer")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 150, 1300, 600)
         self.setFixedSize(self.size())
         self.setWindowIcon(QtGui.QIcon("static/img/icon.png"))
         # self.setStyleSheet("background: rgb(20,0,36);")
@@ -148,9 +153,12 @@ class Sorter(QWidget):
         self.input_textbox.setPlaceholderText("Enter a list of numbers separated by commas")
         self.load_button = QPushButton("Load from File")    
         self.sort_button = QPushButton("Sort")
+        self.link_list_button = QPushButton("Linked List")
+        self.shortest_path_button_djikarta_algorithm = QPushButton("Adjacency matrix")
+        self.shortest_path_from_graph = QPushButton("Shortest Path (Djikarta Algorithm)")
+        self.shortest_path_greeedy_algorithm = QPushButton("Shortest Path (Greedy Algorithm)")
         self.save_button = QPushButton("Save to File")
         self.exit_button = QPushButton("Exit")
-        self.link_list_button = QPushButton("Linked List")
         self.change_theme_button = QPushButton("Change Theme")
         # self.exit_button.setStyleSheet("background-color: #0f140c;")
         self.clear_button = QPushButton("Clear")
@@ -183,6 +191,9 @@ class Sorter(QWidget):
         button_layout.addWidget(self.sort_button)
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.link_list_button)
+        button_layout.addWidget(self.shortest_path_button_djikarta_algorithm)
+        button_layout.addWidget(self.shortest_path_from_graph)
+        button_layout.addWidget(self.shortest_path_greeedy_algorithm)
         button_layout.addWidget(self.exit_button)
         button_layout.addWidget(self.clear_button)
         button_layout.addWidget(self.change_theme_button)
@@ -204,6 +215,8 @@ class Sorter(QWidget):
         self.exit_button.clicked.connect(self.exit)
         self.clear_button.clicked.connect(self.clear)
         self.link_list_button.clicked.connect(self.link_list_open)
+        self.shortest_path_button_djikarta_algorithm.clicked.connect(self.shortest_path_open)
+        self.shortest_path_greeedy_algorithm.clicked.connect(self.shortest_path_open_greedy_algorithm)
         self.change_theme_button.clicked.connect(self.change_theme)
         self.show()
         
@@ -211,6 +224,23 @@ class Sorter(QWidget):
         self.second_window = App()
         self.second_window.show()
         self.close()
+        
+    def shortest_path_open(self):
+        self.third_window = ShortestPathFinder()
+        self.third_window.show()
+        self.close()
+        
+    def shortest_path_open_from_graph(self):
+        self.third_window = ShortestPathFinderFromGraph()
+        self.third_window.show()
+        self.close()
+        
+    def shortest_path_open_greedy_algorithm(self):
+        self.fourth_window = ShortestPathApp()
+        self.fourth_window.show()
+        self.close()
+        
+        
     
     # change theme to multiple themes
     

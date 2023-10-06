@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdi
 from collections import defaultdict
 import sys
 
-class ShortestPathFinder(QWidget):
+class ShortestPathFinderFromGraph(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -69,6 +69,6 @@ class ShortestPathFinder(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = ShortestPathFinder()
+    window = ShortestPathFinderFromGraph()
     window.show()
     sys.exit(app.exec())
